@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import time
 
 class Snake:
 		def __init__(self, parentScreen):
@@ -7,6 +8,7 @@ class Snake:
 				self.block = pygame.image.load("block.png").convert()  # Zapisanie bloku do zmiennej
 				self.x = 100
 				self.y = 100
+				self.direction = 'down'
 
 		def draw(self):
 				self.parentScreen.fill((50, 168, 82))
@@ -14,19 +16,27 @@ class Snake:
 				pygame.display.flip()
 
 		def moveUp(self):
-				self.y -= 50
-				self.draw()
+				self.direction = 'up'
 
 		def moveDown(self):
-				self.y += 50
-				self.draw()
+				self.direction = 'down'
 
 		def moveRight(self):
-				self.x += 50
-				self.draw()
+				self.direction = 'right'
 
 		def moveLeft(self):
-				self.x -= 50
+				self.direction = 'left'
+
+		def walk(self):
+				if self.direction == "up":
+						self.y -= 40
+				if self.direction == "down":
+						self.y += 40
+				if self.direction == "right":
+						self.x += 40
+				if self.direction == "left":
+						self.x -= 40
+				
 				self.draw()
 
 class Game:
@@ -50,7 +60,7 @@ class Game:
 										if event.key == K_ESCAPE:
 												running = False
 
-											# Kierowanie obiektem
+										# Kierowanie obiektem
 										if event.key == K_w:
 												self.snake.moveUp()
 
@@ -65,6 +75,10 @@ class Game:
 
 								elif event.type == QUIT:
 										running = False
+						
+						# Zrobienie żeby wąż sam się poruszał
+						self.snake.walk()
+						time.sleep(0.2)  # Uśpienie na 0.2s
 
 if __name__ == "__main__":
 		game = Game()
