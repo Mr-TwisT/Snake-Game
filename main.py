@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import time
+import random
 
 SIZE = 50
 
@@ -14,6 +15,10 @@ class Apple:
 		def draw(self):
 				self.parentScreen.blit(self.appleImage, (self.x, self.y))
 				pygame.display.flip()
+		
+		def move(self):
+				self.x = random.randint(0,19)*SIZE
+				self.y = random.randint(0,14)*SIZE
 
 class Snake:
 		def __init__(self, parentScreen, length=1):
@@ -74,6 +79,18 @@ class Game:
 				self.apple = Apple(self.surface)  # Stworzenie obiektu apple na podstawie klasy Apple
 				self.apple.draw()
 
+		def isCollision(self, x_apple, y_apple, x_snake, y_snake):
+				if x_snake == x_apple and y_snake == y_apple:
+						return True
+				return False
+
+		def play(self):
+				self.snake.walk()
+				self.apple.draw()
+
+				if self.isCollision(self.apple.x, self.apple.y, self.snake.x[0], self.snake.y[0]):
+						self.apple.move()
+
 		def run(self):
 				running = True
 				while running:
@@ -99,9 +116,8 @@ class Game:
 										running = False
 						
 						# Zrobienie żeby wąż sam się poruszał
-						self.snake.walk()
-						self.apple.draw()
-						time.sleep(0.35)  # Uśpienie na 0.35s
+						self.play()
+						time.sleep(0.1)  # Uśpienie na 0.35s
 
 if __name__ == "__main__":
 		game = Game()
