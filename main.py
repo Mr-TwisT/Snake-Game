@@ -29,6 +29,11 @@ class Snake:
 				self.y = [100] * length
 				self.direction = 'down'
 
+		def increaseLength(self):
+				self.length += 1
+				self.x.append(24)  # Tutaj może być losowa wartość np.:123
+				self.y.append(24)  # Tutaj może być losowa wartość np.:123
+
 		def draw(self):
 				self.parentScreen.fill((50, 168, 82))
 				for i in range(self.length):
@@ -73,7 +78,7 @@ class Game:
 				self.surface = pygame.display.set_mode((1000, 750))  # Stworzenie planszy o wymiarach w [px]
 				self.surface.fill((50, 168, 82))  # Wypełnienie planszy kolorem
 
-				self.snake = Snake(self.surface, 6)  # Stworzenie obiektu snake na podstawie klasy Snake
+				self.snake = Snake(self.surface, 2)  # Stworzenie obiektu snake na podstawie klasy Snake
 				self.snake.draw()
 
 				self.apple = Apple(self.surface)  # Stworzenie obiektu apple na podstawie klasy Apple
@@ -87,9 +92,17 @@ class Game:
 		def play(self):
 				self.snake.walk()
 				self.apple.draw()
+				self.displayScore()
+				pygame.display.flip()
 
 				if self.isCollision(self.apple.x, self.apple.y, self.snake.x[0], self.snake.y[0]):
 						self.apple.move()
+						self.snake.increaseLength()
+
+		def displayScore(self):
+				font = pygame.font.SysFont("Calibri", 30)  # Używany font
+				score = font.render(f"Score: {self.snake.length}", True, (220,220,220))
+				self.surface.blit(score, (850, 10))  # Blit trzeba użyć zawsze gdy chcemy wyświetlić coś na ekranie
 
 		def run(self):
 				running = True
@@ -117,7 +130,7 @@ class Game:
 						
 						# Zrobienie żeby wąż sam się poruszał
 						self.play()
-						time.sleep(0.1)  # Uśpienie na 0.35s
+						time.sleep(0.2)  # Uśpienie na 0.35s
 
 if __name__ == "__main__":
 		game = Game()
