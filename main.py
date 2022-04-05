@@ -2,17 +2,32 @@ import pygame
 from pygame.locals import *
 import time
 
-class Snake:
+SIZE = 50
+
+class Apple:
 		def __init__(self, parentScreen):
 				self.parentScreen = parentScreen
-				self.block = pygame.image.load("block.png").convert()  # Zapisanie bloku do zmiennej
-				self.x = 100
-				self.y = 100
+				self.appleImage = pygame.image.load("apple.png")
+				self.x = SIZE * 4
+				self.y = SIZE * 7
+
+		def draw(self):
+				self.parentScreen.blit(self.appleImage, (self.x, self.y))
+				pygame.display.flip()
+
+class Snake:
+		def __init__(self, parentScreen, length=1):
+				self.length = length
+				self.parentScreen = parentScreen
+				self.block = pygame.image.load("block.png")  # Zapisanie bloku do zmiennej
+				self.x = [100] * length
+				self.y = [100] * length
 				self.direction = 'down'
 
 		def draw(self):
 				self.parentScreen.fill((50, 168, 82))
-				self.parentScreen.blit(self.block, (self.x,self.y))  # Ustawienie elementu na ekanie wg współrzędnych
+				for i in range(self.length):
+						self.parentScreen.blit(self.block, (self.x[i], self.y[i]))  # Ustawienie elementu na ekanie wg współrzędnych
 				pygame.display.flip()
 
 		def moveUp(self):
@@ -28,14 +43,18 @@ class Snake:
 				self.direction = 'left'
 
 		def walk(self):
+				for i in range(self.length-1,0,-1):
+						self.x[i] = self.x[i-1]
+						self.y[i] = self.y[i-1]
+
 				if self.direction == "up":
-						self.y -= 40
+						self.y[0] -= SIZE
 				if self.direction == "down":
-						self.y += 40
+						self.y[0] += SIZE
 				if self.direction == "right":
-						self.x += 40
+						self.x[0] += SIZE
 				if self.direction == "left":
-						self.x -= 40
+						self.x[0] -= SIZE
 				
 				self.draw()
 
@@ -49,8 +68,11 @@ class Game:
 				self.surface = pygame.display.set_mode((1000, 750))  # Stworzenie planszy o wymiarach w [px]
 				self.surface.fill((50, 168, 82))  # Wypełnienie planszy kolorem
 
-				self.snake = Snake(self.surface)  # Stworzenie obiektu snake na podstawie klasy Snake
+				self.snake = Snake(self.surface, 6)  # Stworzenie obiektu snake na podstawie klasy Snake
 				self.snake.draw()
+
+				self.apple = Apple(self.surface)  # Stworzenie obiektu apple na podstawie klasy Apple
+				self.apple.draw()
 
 		def run(self):
 				running = True
@@ -78,7 +100,8 @@ class Game:
 						
 						# Zrobienie żeby wąż sam się poruszał
 						self.snake.walk()
-						time.sleep(0.2)  # Uśpienie na 0.2s
+						self.apple.draw()
+						time.sleep(0.35)  # Uśpienie na 0.35s
 
 if __name__ == "__main__":
 		game = Game()
