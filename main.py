@@ -4,135 +4,179 @@ import time
 import random
 
 SIZE = 50
+BACKGROUND_COLOR = (50, 168, 82)
+
 
 class Apple:
-		def __init__(self, parentScreen):
-				self.parentScreen = parentScreen
-				self.appleImage = pygame.image.load("apple.png")
-				self.x = SIZE * 4
-				self.y = SIZE * 7
+    def __init__(self, parentScreen):
+        self.parentScreen = parentScreen
+        self.appleImage = pygame.image.load("apple.png")
+        self.x = SIZE * 4
+        self.y = SIZE * 7
 
-		def draw(self):
-				self.parentScreen.blit(self.appleImage, (self.x, self.y))
-				pygame.display.flip()
-		
-		def move(self):
-				self.x = random.randint(0,19)*SIZE
-				self.y = random.randint(0,14)*SIZE
+    def draw(self):
+        self.parentScreen.blit(self.appleImage, (self.x, self.y))
+        pygame.display.flip()
+
+    def move(self):
+        self.x = random.randint(0, 19)*SIZE
+        self.y = random.randint(0, 14)*SIZE
+
 
 class Snake:
-		def __init__(self, parentScreen, length=1):
-				self.length = length
-				self.parentScreen = parentScreen
-				self.block = pygame.image.load("block.png")  # Zapisanie bloku do zmiennej
-				self.x = [100] * length
-				self.y = [100] * length
-				self.direction = 'down'
+    def __init__(self, parentScreen, length=1):
+        self.length = length
+        self.parentScreen = parentScreen
+        # Zapisanie bloku do zmiennej
+        self.block = pygame.image.load("block.png")
+        self.x = [100] * length
+        self.y = [100] * length
+        self.direction = 'down'
 
-		def increaseLength(self):
-				self.length += 1
-				self.x.append(24)  # Tutaj może być losowa wartość np.:123
-				self.y.append(24)  # Tutaj może być losowa wartość np.:123
+    def increaseLength(self):
+        self.length += 1
+        self.x.append(24)  # Tutaj może być losowa wartość np.:123
+        self.y.append(24)  # Tutaj może być losowa wartość np.:123
 
-		def draw(self):
-				self.parentScreen.fill((50, 168, 82))
-				for i in range(self.length):
-						self.parentScreen.blit(self.block, (self.x[i], self.y[i]))  # Ustawienie elementu na ekanie wg współrzędnych
-				pygame.display.flip()
+    def draw(self):
+        self.parentScreen.fill(BACKGROUND_COLOR)
+        for i in range(self.length):
+            # Ustawienie elementu na ekanie wg współrzędnych
+            self.parentScreen.blit(self.block, (self.x[i], self.y[i]))
+        pygame.display.flip()
 
-		def moveUp(self):
-				self.direction = 'up'
+    def moveUp(self):
+        self.direction = 'up'
 
-		def moveDown(self):
-				self.direction = 'down'
+    def moveDown(self):
+        self.direction = 'down'
 
-		def moveRight(self):
-				self.direction = 'right'
+    def moveRight(self):
+        self.direction = 'right'
 
-		def moveLeft(self):
-				self.direction = 'left'
+    def moveLeft(self):
+        self.direction = 'left'
 
-		def walk(self):
-				for i in range(self.length-1,0,-1):
-						self.x[i] = self.x[i-1]
-						self.y[i] = self.y[i-1]
+    def walk(self):
+        for i in range(self.length-1, 0, -1):
+            self.x[i] = self.x[i-1]
+            self.y[i] = self.y[i-1]
 
-				if self.direction == "up":
-						self.y[0] -= SIZE
-				if self.direction == "down":
-						self.y[0] += SIZE
-				if self.direction == "right":
-						self.x[0] += SIZE
-				if self.direction == "left":
-						self.x[0] -= SIZE
-				
-				self.draw()
+        if self.direction == "up":
+            self.y[0] -= SIZE
+        if self.direction == "down":
+            self.y[0] += SIZE
+        if self.direction == "right":
+            self.x[0] += SIZE
+        if self.direction == "left":
+            self.x[0] -= SIZE
+
+        self.draw()
+
 
 class Game:
-		def __init__(self):
-				pygame.init()
+    def __init__(self):
+        pygame.init()
 
-				icon = pygame.image.load("icon.png")  # Zapisanie ikony do zmiennej
-				pygame.display.set_icon(icon)  # Ustawienie ikony okna gry
-				pygame.display.set_caption("Snake Game")  # Tytuł okna gry
-				self.surface = pygame.display.set_mode((1000, 750))  # Stworzenie planszy o wymiarach w [px]
-				self.surface.fill((50, 168, 82))  # Wypełnienie planszy kolorem
+        icon = pygame.image.load("icon.png")  # Zapisanie ikony do zmiennej
+        pygame.display.set_icon(icon)  # Ustawienie ikony okna gry
+        pygame.display.set_caption("Snake Game")  # Tytuł okna gry
+        # Stworzenie planszy o wymiarach w [px]
+        self.surface = pygame.display.set_mode((1000, 750))
+        self.surface.fill(BACKGROUND_COLOR)  # Wypełnienie planszy kolorem
 
-				self.snake = Snake(self.surface, 2)  # Stworzenie obiektu snake na podstawie klasy Snake
-				self.snake.draw()
+        # Stworzenie obiektu snake na podstawie klasy Snake
+        self.snake = Snake(self.surface, 2)
+        self.snake.draw()
 
-				self.apple = Apple(self.surface)  # Stworzenie obiektu apple na podstawie klasy Apple
-				self.apple.draw()
+        # Stworzenie obiektu apple na podstawie klasy Apple
+        self.apple = Apple(self.surface)
+        self.apple.draw()
 
-		def isCollision(self, x_apple, y_apple, x_snake, y_snake):
-				if x_snake == x_apple and y_snake == y_apple:
-						return True
-				return False
+    def isCollision(self, x_apple, y_apple, x_snake, y_snake):
+        if x_snake == x_apple and y_snake == y_apple:
+            return True
+        return False
 
-		def play(self):
-				self.snake.walk()
-				self.apple.draw()
-				self.displayScore()
-				pygame.display.flip()
+    def play(self):
+        self.snake.walk()
+        self.apple.draw()
+        self.displayScore()
+        pygame.display.flip()
 
-				if self.isCollision(self.apple.x, self.apple.y, self.snake.x[0], self.snake.y[0]):
-						self.apple.move()
-						self.snake.increaseLength()
+        # Wąż uderza w jabłko
+        if self.isCollision(self.apple.x, self.apple.y, self.snake.x[0], self.snake.y[0]):
+            self.apple.move()
+            self.snake.increaseLength()
 
-		def displayScore(self):
-				font = pygame.font.SysFont("Calibri", 30)  # Używany font
-				score = font.render(f"Score: {self.snake.length}", True, (220,220,220))
-				self.surface.blit(score, (850, 10))  # Blit trzeba użyć zawsze gdy chcemy wyświetlić coś na ekranie
+        # Wąż uderza w siebie samego
+        for i in range(3, self.snake.length):
+            if self.isCollision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
+                raise "Game Over!"
 
-		def run(self):
-				running = True
-				while running:
-						for event in pygame.event.get():
-								if event.type == KEYDOWN:
-										if event.key == K_ESCAPE:
-												running = False
+    def showGameOverScreen(self):
+        self.surface.fill(BACKGROUND_COLOR)
+        font = pygame.font.SysFont("Calibri", 30)
+        lineOne = font.render(
+            f"Game is over! Your score is {self.snake.length}", True, (255, 255, 255))
+        self.surface.blit(lineOne, (300, 300))
+        lineTwo = font.render(
+            f"To play again press SPACE. To exit press ESC.", True, (255, 255, 255))
+        self.surface.blit(lineTwo, (225, 350))
+        pygame.display.flip()
 
-										# Kierowanie obiektem
-										if event.key == K_w:
-												self.snake.moveUp()
+    def displayScore(self):
+        font = pygame.font.SysFont("Calibri", 30)  # Używany font
+        score = font.render(
+            f"Score: {self.snake.length}", True, (220, 220, 220))
+        # Blit trzeba użyć zawsze gdy chcemy wyświetlić coś na ekranie
+        self.surface.blit(score, (850, 10))
 
-										if event.key == K_s:
-												self.snake.moveDown()
+    def reset(self):
+        self.snake = Snake(self.surface, 2)
+        self.apple = Apple(self.surface)
 
-										if event.key == K_d:
-												self.snake.moveRight()
+    def run(self):
+        running = True
+        pause = False
 
-										if event.key == K_a:
-												self.snake.moveLeft()
+        while running:
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        running = False
 
-								elif event.type == QUIT:
-										running = False
-						
-						# Zrobienie żeby wąż sam się poruszał
-						self.play()
-						time.sleep(0.2)  # Uśpienie na 0.35s
+                    if event.key == K_SPACE:
+                        pause = False
+
+                    if not pause:
+                        # Kierowanie obiektem
+                        if event.key == K_w:
+                            self.snake.moveUp()
+
+                        if event.key == K_s:
+                            self.snake.moveDown()
+
+                        if event.key == K_d:
+                            self.snake.moveRight()
+
+                        if event.key == K_a:
+                            self.snake.moveLeft()
+
+                elif event.type == QUIT:
+                    running = False
+
+            try:
+                if not pause:
+                    self.play()
+            except Exception as e:
+                pause = True
+                self.showGameOverScreen()
+                self.reset()
+
+            time.sleep(0.2)  # Uśpienie na 0.35s
+
 
 if __name__ == "__main__":
-		game = Game()
-		game.run()
-
+    game = Game()
+    game.run()
