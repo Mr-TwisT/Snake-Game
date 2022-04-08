@@ -81,6 +81,10 @@ class Game:
         icon = pygame.image.load("icon.png")  # Zapisanie ikony do zmiennej
         pygame.display.set_icon(icon)  # Ustawienie ikony okna gry
         pygame.display.set_caption("Snake Game")  # Tytuł okna gry
+
+        pygame.mixer.init()  # Inicjalizacja funkcji muzycznych
+        self.playMusic()
+
         # Stworzenie planszy o wymiarach w [px]
         self.surface = pygame.display.set_mode((1000, 750))
         self.surface.fill(BACKGROUND_COLOR)  # Wypełnienie planszy kolorem
@@ -98,6 +102,15 @@ class Game:
             return True
         return False
 
+    def playMusic(self):
+        pygame.mixer.music.load("./sounds/backgroundMusic.mp3")
+        # "-1" jest po to żeby muzyka była zapętlona
+        pygame.mixer.music.play(-1)
+
+    def playSound(self, soundName):
+        sound = pygame.mixer.Sound(f"./sounds/{soundName}.mp3")
+        pygame.mixer.Sound.play(sound)
+
     def play(self):
         self.snake.walk()
         self.apple.draw()
@@ -106,12 +119,14 @@ class Game:
 
         # Wąż uderza w jabłko
         if self.isCollision(self.apple.x, self.apple.y, self.snake.x[0], self.snake.y[0]):
+            self.playSound("dingSound")
             self.apple.move()
             self.snake.increaseLength()
 
         # Wąż uderza w siebie samego
-        for i in range(3, self.snake.length):
+        for i in range(1, self.snake.length):
             if self.isCollision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
+                self.playSound("hitSound")
                 raise "Game Over!"
 
     def showGameOverScreen(self):
@@ -124,6 +139,8 @@ class Game:
             f"To play again press SPACE. To exit press ESC.", True, (255, 255, 255))
         self.surface.blit(lineTwo, (225, 350))
         pygame.display.flip()
+
+        pygame.mixer.music.pause()  # Zapauzuj muzykę gdy jest game over
 
     def displayScore(self):
         font = pygame.font.SysFont("Calibri", 30)  # Używany font
@@ -146,7 +163,9 @@ class Game:
                     if event.key == K_ESCAPE:
                         running = False
 
+                    # Tutaj co ma się dziać gdy chcemy zagrać od nowa
                     if event.key == K_SPACE:
+                        pygame.mixer.music.unpause()
                         pause = False
 
                     if not pause:
@@ -174,7 +193,7 @@ class Game:
                 self.showGameOverScreen()
                 self.reset()
 
-            time.sleep(0.2)  # Uśpienie na 0.35s
+            time.sleep(0.2)  # Uśpienie na X[s]
 
 
 if __name__ == "__main__":
