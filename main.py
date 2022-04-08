@@ -4,7 +4,6 @@ import time
 import random
 
 SIZE = 50
-BACKGROUND_COLOR = (50, 168, 82)
 
 
 class Apple:
@@ -102,6 +101,11 @@ class Game:
             return True
         return False
 
+    def collisionWithBorder(self, x_snake, y_snake):
+        if x_snake >= 1000 or x_snake < 0 or y_snake < 0 or y_snake >= 750:
+            return True
+        return False
+
     def playMusic(self):
         pygame.mixer.music.load("./sounds/backgroundMusic.mp3")
         # "-1" jest po to żeby muzyka była zapętlona
@@ -133,6 +137,11 @@ class Game:
             if self.isCollision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 self.playSound("hitSound")
                 raise "Game Over!"
+
+        # Wąż uderza w obramowanie
+        if self.collisionWithBorder(self.snake.x[0], self.snake.y[0]):
+            self.playSound("hitSound")
+            raise "Game Over!"
 
     def showGameOverScreen(self):
         self.renderBackground()
