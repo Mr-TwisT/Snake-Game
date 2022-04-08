@@ -10,7 +10,7 @@ BACKGROUND_COLOR = (50, 168, 82)
 class Apple:
     def __init__(self, parentScreen):
         self.parentScreen = parentScreen
-        self.appleImage = pygame.image.load("apple.png")
+        self.appleImage = pygame.image.load("./images/apple.png")
         self.x = SIZE * 4
         self.y = SIZE * 7
 
@@ -28,7 +28,7 @@ class Snake:
         self.length = length
         self.parentScreen = parentScreen
         # Zapisanie bloku do zmiennej
-        self.block = pygame.image.load("block.png")
+        self.block = pygame.image.load("./images/block.png")
         self.x = [100] * length
         self.y = [100] * length
         self.direction = 'down'
@@ -39,7 +39,6 @@ class Snake:
         self.y.append(24)  # Tutaj może być losowa wartość np.:123
 
     def draw(self):
-        self.parentScreen.fill(BACKGROUND_COLOR)
         for i in range(self.length):
             # Ustawienie elementu na ekanie wg współrzędnych
             self.parentScreen.blit(self.block, (self.x[i], self.y[i]))
@@ -78,7 +77,8 @@ class Game:
     def __init__(self):
         pygame.init()
 
-        icon = pygame.image.load("icon.png")  # Zapisanie ikony do zmiennej
+        # Zapisanie ikony do zmiennej
+        icon = pygame.image.load("./images/icon.png")
         pygame.display.set_icon(icon)  # Ustawienie ikony okna gry
         pygame.display.set_caption("Snake Game")  # Tytuł okna gry
 
@@ -87,7 +87,7 @@ class Game:
 
         # Stworzenie planszy o wymiarach w [px]
         self.surface = pygame.display.set_mode((1000, 750))
-        self.surface.fill(BACKGROUND_COLOR)  # Wypełnienie planszy kolorem
+        # self.surface.fill(BACKGROUND_COLOR)  # Wypełnienie planszy kolorem
 
         # Stworzenie obiektu snake na podstawie klasy Snake
         self.snake = Snake(self.surface, 2)
@@ -111,7 +111,12 @@ class Game:
         sound = pygame.mixer.Sound(f"./sounds/{soundName}.mp3")
         pygame.mixer.Sound.play(sound)
 
+    def renderBackground(self):
+        bg = pygame.image.load("./images/bgImage.jpg")
+        self.surface.blit(bg, (0, 0))
+
     def play(self):
+        self.renderBackground()
         self.snake.walk()
         self.apple.draw()
         self.displayScore()
@@ -130,7 +135,7 @@ class Game:
                 raise "Game Over!"
 
     def showGameOverScreen(self):
-        self.surface.fill(BACKGROUND_COLOR)
+        self.renderBackground()
         font = pygame.font.SysFont("Calibri", 30)
         lineOne = font.render(
             f"Game is over! Your score is {self.snake.length}", True, (255, 255, 255))
@@ -145,7 +150,7 @@ class Game:
     def displayScore(self):
         font = pygame.font.SysFont("Calibri", 30)  # Używany font
         score = font.render(
-            f"Score: {self.snake.length}", True, (220, 220, 220))
+            f"Score: {self.snake.length}", True, (250, 250, 250))
         # Blit trzeba użyć zawsze gdy chcemy wyświetlić coś na ekranie
         self.surface.blit(score, (850, 10))
 
