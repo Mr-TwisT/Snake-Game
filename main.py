@@ -4,6 +4,7 @@ import time
 import random
 
 SIZE = 50
+SNAKE_SPEED = 0.2
 
 
 class Apple:
@@ -23,7 +24,8 @@ class Apple:
 
 
 class Snake:
-    def __init__(self, parentScreen, length=1):
+    def __init__(self, parentScreen, speed, length=2):
+        self.speed = speed
         self.length = length
         self.parentScreen = parentScreen
         # Zapisanie bloku do zmiennej
@@ -36,6 +38,7 @@ class Snake:
         self.length += 1
         self.x.append(24)  # Tutaj może być losowa wartość np.:123
         self.y.append(24)  # Tutaj może być losowa wartość np.:123
+        self.speed -= 0.02
 
     def draw(self):
         for i in range(self.length):
@@ -89,7 +92,7 @@ class Game:
         # self.surface.fill(BACKGROUND_COLOR)  # Wypełnienie planszy kolorem
 
         # Stworzenie obiektu snake na podstawie klasy Snake
-        self.snake = Snake(self.surface, 2)
+        self.snake = Snake(self.surface, SNAKE_SPEED, 2)
         self.snake.draw()
 
         # Stworzenie obiektu apple na podstawie klasy Apple
@@ -180,6 +183,7 @@ class Game:
                     # Tutaj co ma się dziać gdy chcemy zagrać od nowa
                     if event.key == K_SPACE:
                         pygame.mixer.music.unpause()
+                        self.snake.speed = 0.2
                         pause = False
 
                     if not pause:
@@ -207,7 +211,7 @@ class Game:
                 self.showGameOverScreen()
                 self.reset()
 
-            time.sleep(0.2)  # Uśpienie na X[s]
+            time.sleep(self.snake.speed)  # Uśpienie na X[s]
 
 
 if __name__ == "__main__":
